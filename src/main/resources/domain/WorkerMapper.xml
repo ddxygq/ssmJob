@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>																																																
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ddxygq.ssmdemo.dao.WorkerMapper">
+ 	<select id="queryMyInvite" resultType="project" >
+ 	select p.project_name,p.project_targetdate,p.project_duedate,s.person_name,p.project_person,i.invite_order,i.invite_flag
+ 	from invite i,orders o,project p,person s
+	where i.invite_order=o.order_id
+	and o.order_project=p.project_id
+	and i.invite_head=s.person_id
+	and i.invite_worker=#{invite_worker} limit #{start},#{pageSize}
+ 	</select>
+ 	
+ 	<select id="queryInviteCount" resultType="int" >
+ 	select count(*) from invite
+ 	</select>
+ 	
+ 	<select id="queryPersonHead" resultType="String" >
+ 	select person_head from person where person_id=#{person_id}
+ 	</select>
+ 	
+ 	<update id="updateInvite"  >
+ 	update invite set invite_flag=2 where invite_worker =#{invite_worker} and invite_order=#{invite_order}
+ 	</update>
+ 	
+ 	<select id="queryMyOrders" resultType="project" >
+	select s.person_name, p.project_name,p.project_targetdate,p.project_duedate,p.project_person,s1.person_head,p.project_flag
+	from orders o,invite i,project p,person s ,person s1 
+	where i.invite_order=o.order_id
+	and o.order_project=p.project_id
+	and s1.person_head=i.invite_head 
+	and s.person_id=i.invite_head 
+	and s1.person_id=i.invite_worker
+	and i.invite_flag=2 
+	and i.invite_worker=#{invite_worker}
+ 	</select>
+
+ 	<update id="updateMyTeam">
+ 	update person set person_head=NULL where person_id=#{person_id}
+ 	</update>
+ 	
+ 	<update id="updatePerson">	
+	update person ,invite set person_head = invite_head where person_id=#{person_id}
+ 	</update>
+ 	
+ 	<update id="updateInvite1"  >
+ 	update invite set invite_flag=1 where invite_worker =#{invite_worker}
+ 	</update>
+</mapper>

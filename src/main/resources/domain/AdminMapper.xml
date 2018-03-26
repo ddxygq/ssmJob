@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ddxygq.ssmdemo.dao.AdminMapper">
+	
+	<select id="getAllPerson"  parameterType="map" resultType="person">
+		select  p.person_id,p.person_name name1,p.person_account,p.person_pwd,r.role_name,p.person_flag,p.person_address,e.person_name name2
+		from person p left join person e on p.person_head=e.person_id inner join role r on	p.person_role=r.role_id 
+		where p.person_role!=4
+		<if test="person_role!=null">and person_role=#{person_rolel}</if>
+		order by p.person_id
+		
+	</select>
+	
+	<select id="getAllPersonCount" parameterType="map" resultType="int">
+		select count(person_id) from person
+		where person_role!=4
+	</select>
+	
+	<select id="queryForFammer"  parameterType="map" resultType="person">
+		select  p.person_id,p.person_name name1,p.person_account,p.person_pwd,r.role_name,p.person_flag,p.person_address,e.person_name name2
+		from person p left join person e on p.person_head=e.person_id inner join role r on	p.person_role=r.role_id 
+		where p.person_role=3
+		order by p.person_id
+		
+	</select>
+	
+	<select id="queryForHead"  parameterType="map" resultType="person">
+		select  p.person_id,p.person_name name1,p.person_account,p.person_pwd,r.role_name,p.person_flag,p.person_address,e.person_name name2
+		from person p left join person e on p.person_head=e.person_id inner join role r on	p.person_role=r.role_id 
+		where p.person_role=2
+		order by p.person_id
+		
+	</select>
+	
+	<select id="queryForWorker"  parameterType="map" resultType="person">
+		select  p.person_id,p.person_name name1,p.person_account,p.person_pwd,r.role_name,p.person_flag,p.person_address,e.person_name name2
+		from person p left join person e on p.person_head=e.person_id inner join role r on	p.person_role=r.role_id 
+		where p.person_role=1
+		order by p.person_id
+	</select>
+	
+	<update id="updatePwd">
+		update person set person_pwd=111 where person_id=#{person_id}
+	</update>
+	
+	<select id="queryForFlag"  parameterType="map" resultType="person">
+		select  p.person_id,p.person_name name1,p.person_account,p.person_pwd,r.role_name,p.person_flag,p.person_address,e.person_name name2
+		from person p left join person e on p.person_head=e.person_id inner join role r on	p.person_role=r.role_id 
+		where p.person_role!=4 and p.person_flag=1
+		order by p.person_id
+		
+	</select>
+	
+	<select id="queryForFlag2"  parameterType="map" resultType="person">
+		select  p.person_id,p.person_name name1,p.person_account,p.person_pwd,r.role_name,p.person_flag,p.person_address,e.person_name name2
+		from person p left join person e on p.person_head=e.person_id inner join role r on	p.person_role=r.role_id 
+		where p.person_role!=4 and p.person_flag=2
+		order by p.person_id
+		
+	</select>
+	
+	<update id="updateFlag">
+		update person set person_flag=2 where person_id=#{person_id}
+	</update>
+	
+	<select id="queryForLike"  parameterType="map" resultType="person">
+		select  p.person_id,p.person_name name1,p.person_account,p.person_pwd,r.role_name,p.person_flag,p.person_address,e.person_name name2
+		from person p left join person e on p.person_head=e.person_id inner join role r on	p.person_role=r.role_id 
+		where p.person_role!=4 and p.person_account like '%#{person_account}%'
+		order by p.person_id
+		
+	</select>
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ddxygq.ssmdemo.dao.OrdersMapper">
+
+	<!-- 查询已接订单 -->
+	<select id="queryOrders" resultType="map">
+		select o.order_id,project_name,order_starttime,order_endtime,trueendtime,p.person_name,person_number,need_number,header_flag
+		from orders o
+		inner join orderheader oh on o.order_id = oh.order_id
+		inner join project pr on pr.project_id = o.order_project
+		inner join person p on p.person_id = o.create_id
+		and oh.person_id = #{person_id}
+		limit #{startData},#{pageSize}
+	</select>
+	
+	<select id="myOrdersCount" resultType="int">
+		select count(*)
+		from orders o
+		inner join orderheader oh on o.order_id = oh.order_id
+		inner join project pr on pr.project_id = o.order_project
+		inner join person p on p.person_id = o.create_id
+		and oh.person_id = ${value}
+	</select>
+	
+	<!-- 查询某一个订单下我的工人 -->
+	<select id="orderWorker" resultType="map">	
+		select p.* from person p
+		inner join orderperson op
+		on p.person_id = op.person_id
+		inner join orderheader oh
+		on op.order_id = oh.order_id
+		where op.order_id = #{order_id}
+		and oh.person_id = #{person_id}
+	</select>
+	
+	<!-- 可接订单 -->
+	<select id="canorder" resultType="map">
+		select o.*,p.person_name,pr.project_name from orders o
+		inner join project pr on o.order_project = pr.project_id
+		inner join person p on p.person_id = o.create_id
+		where person_number > 0
+		and order_id not in 
+		(select order_id from orderheader where person_id = #{person_id})
+		limit #{startData},#{pageSize}
+	</select>
+	<select id="canorderCount" resultType="int">
+		select count(*) from orders o
+		inner join project pr on o.order_project = pr.project_id
+		inner join person p on p.person_id = o.create_id
+		where person_number > 0
+		and order_id not in 
+		(select order_id from orderheader where person_id = ${value})
+	</select>
+	
+	<!-- 申请订单 -->
+	<!-- 查看是否已经申请过了 -->
+	<select id="sureOrder" resultType="map">
+		select * from orderheader where order_id = #{order_id} and person_id = #{person_id}
+	</select>
+	<insert id="askOrder">
+		insert into orderheader value(#{orderheader_id},#{person_id},#{order_id},'1')
+		<!-- 
+			insert into orderheader(orderheader_id,person_id,order_id,header_flag) 
+			select #{orderheader_id},#{person_id},#{order_id},'1' from dual
+			where not exists(select * from orderheader 
+			where person_id = #{person_id} and order_id = #{order_id})
+		 -->
+	</insert>
+		
+</mapper>

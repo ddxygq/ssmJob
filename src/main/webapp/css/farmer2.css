@@ -1,0 +1,32 @@
+body{
+	margin : 0 0;
+	font-size : 20px;
+}
+#farmer_head{
+	margin : 0 auto;
+	text-align : center;
+	width : 50%;
+}
+
+#f_list{
+	background-color : #666;
+}
+
+ul li {
+	height : 40px;
+}
+
+#info{
+	background-color : #af9;
+}
+
+div div {
+	float : left;
+}
+.message{
+	margin-left : 20px;
+	margin-top : 20px;
+	float : none;
+	height : 30px;
+}
+

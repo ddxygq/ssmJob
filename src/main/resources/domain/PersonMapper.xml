@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ddxygq.ssmdemo.dao.PersonMapper">
+
+	<!-- 所有人，我的工人 -->
+	<select id="queryPerson" resultType="map">
+		select * from person where person_role = '1'
+		<if test="person_head != null">and person_head=#{person_head}</if>
+		limit #{startData},#{pageSize}
+	</select>
+	
+	<!-- 待邀工人 -->
+	<select id="queryWorker" resultType="map">
+		select * from person p
+		inner join role r on p.person_role = r.role_id
+		and r.role_name = '工人'
+		and p.person_head is null
+		limit #{startData},#{pageSize}
+	</select>
+	
+	<select id="queryPersonByPwd" resultType="map">
+		select * from person p
+		inner join role r on p.person_role = r.role_id
+		and p.person_account = #{person_account}
+		and p.person_pwd = #{person_pwd}
+	</select>
+	
+	<select id="queryPersonByAccount" resultType="person">
+		select t1.* FROM person t1 
+		where person_account=#{person_account}
+	</select>
+	
+	<select id="queryPersonCount" resultType="int">
+		select count(*) FROM person where person_role = '1'
+		<if test="_parameter != null">and person_head=${value}</if>
+	</select>
+	
+	<select id="queryWorkerCount" resultType="int">
+		select count(*) from person p
+		inner join role r on p.person_role = r.role_id
+		and r.role_name = '工人'
+		and p.person_head is null
+	</select>
+	
+	<select id="queryRole" resultType="role">
+		select t1.* FROM role t1 
+	</select>
+	
+	<!-- 删除工人，即将person_head置为空 -->
+	<update id="deleteWorker">
+		update person set person_head = null where person_id = ${value}
+	</update>
+	
+	<insert id="insertPerson">
+		insert into person(person_id,person_name,person_account,person_pwd,person_role,person_flag)
+		value(#{person_id},#{person_name},#{person_account},#{person_pwd},#{person_role},#{person_flag})
+	</insert>
+	
+	<update id="updatePerson">
+		update person set person_name=#{person_name},person_account=#{person_account},person_pwd=#{person_pwd},
+		person_role=#{person_role},person_flag=#{person_flag},person_address=#{person_address},person_head=#{person_head},
+		where person_id=#{person_id}
+	</update>
+	
+	<!-- 单条信息 -->
+	<select id="querySingle" resultType="map">
+		select * from person where person_id = #{person_id}
+	</select>
+	
+</mapper>

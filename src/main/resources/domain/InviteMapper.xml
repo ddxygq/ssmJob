@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ddxygq.ssmdemo.dao.InviteMapper">
+
+	<!-- 添加邀请 -->
+	<insert id="addInvite">
+		insert into invite value(#{invite_id},#{invite_worker},#{invite_order},#{invite_flag},#{invite_head})
+	</insert>
+	
+	<!-- 验证是否被邀请 -->
+	<select id="queryInvite" resultType="map">
+		select * from invite where invite_head = #{invite_head} and invite_worker = #{invite_worker}
+	</select>
+	
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.ddxygq.ssmdemo.dao.FarmerDao">
+
+	<!-- 查询项目 -->
+	<select id="getAllProject" resultType="map">
+		select * from project
+	</select>
+	
+	<!-- 查询订单 -->
+	<select id="lookFarmerOrders" parameterType="map" resultType="map">
+		select * from orders 
+		where createid = '400'
+	</select>
+
+	<!-- 发布订单 -->
+	<insert id="addOrder" parameterType="map">
+		insert into orders(order_id, order_project, order_starttime,order_endtime, create_id,person_number,need_number) 
+		values(#{order_id},#{order_project},#{order_starttime},#{order_endtime},#{create_id},#{person_number},#{need_number})
+	</insert>
+	
+	<update id="updatePerson">
+		update person set person_name = #{person_name},person_pwd = #{person_pwd},person_account = #{person_account} 
+		<if test="person_address != null and person_address != ''">
+			,person_address = #{person_address}
+		</if>
+		where person_id = #{person_id}
+	</update>
+	
+	<!-- 查看农户发布的订单 -->
+	<select id="showMyOrders" resultType="map">
+		select o.*,pr.project_name,p.person_name from orders o 
+		inner join person p on o.create_id = p.person_id 
+		inner join project pr on o.order_project = pr.project_id
+		where create_id = #{create_id} order by pr.project_name
+	</select>
+</mapper>

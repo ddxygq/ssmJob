@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+      	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+		
+	<context:component-scan base-package="com.ddxygq.ssmdemo"/>
+        
+	<!-- 加载数据库配置文件 -->
+	<util:properties id="jdbc" location="classpath:db.properties" />
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    	<property name="driverClassName" value="#{jdbc.driver}" />
+	    <property name="url" value="#{jdbc.url}" />
+	    <property name="username" value="#{jdbc.username}" />
+	    <property name="password" value="#{jdbc.password}" />
+	    <!-- 从数据源中返回的连接是否采用自动提交机制 -->
+	    <property name="defaultAutoCommit" value="true" />
+	    <!-- 是否仅能执行只读操作 -->
+	    <property name="defaultReadOnly" value="false" />
+	    <!-- 初始化数据库连接数 -->
+	    <property name="initialSize" value="0" />
+	    <!-- 最大连接数据库连接数，设置为0时，表示没有限制 -->
+	    <property name="maxActive" value="10" />
+	    <!-- 最大等待连接中的数量，设置为0时，表示没有限制 -->
+	    <property name="maxIdle" value="1" />
+	    <!-- 最大等待秒数，单位为毫秒 -->
+	    <property name="maxWait" value="6000" />
+	    <property name="testWhileIdle" value="true"/>
+	    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+	    <property name="numTestsPerEvictionRun" value="1" />
+	    <property name="validationQuery" value="select 1" />
+	</bean>
+	
+	<!-- 配置SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 指定数据源 -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 指定抽象类地址-->
+		<property name="typeAliasesPackage" value="com.ddxygq.ssmdemo.pojo"/>
+		<!-- 指定mybatis的全局配置文件 -->
+		<property name="configLocation" value="classpath:MyBatis.xml"/>
+		<!-- 指定sql语句映射文件 -->
+		<property name="mapperLocations" value="classpath:domain/*.xml"/>
+	</bean>
+	
+	<!-- 配置映射器(Mapper) -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	    <property name="basePackage" value="com.ddxygq.ssmdemo.dao"/>
+	</bean>
+	
+	<!-- 开启springmvc注解功能 -->
+	<mvc:annotation-driven/>
+	
+	<!--
+	配置静态资源的访问
+	location：配置静态资源所在物理路径。
+	mapping：配置请求静态资源的映射路径。
+	**：匹配当前路径及其子孙路径。
+	-->
+	<mvc:resources location="/js/" mapping="/js/**"/>
+	<mvc:resources location="/images/" mapping="/images/**"/>
+	<mvc:resources location="/jquery-easyui-1.5.4/" mapping="/jquery-easyui-1.5.4/**"/>
+	
+	<!-- 事务管理 -->  
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+	</bean>
+	
+	<!-- 开启事务控制的注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+        
+</beans>
